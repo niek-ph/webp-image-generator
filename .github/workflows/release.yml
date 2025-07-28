@@ -39,6 +39,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch full history for changelog generation
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -62,21 +64,12 @@ jobs:
         id: tag
         run: echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
 
-      - name: Generate changelog
-        id: changelog
-        run: |
-          echo "changelog<<EOF" >> $GITHUB_OUTPUT
-          echo "## What's Changed" >> $GITHUB_OUTPUT
-          echo "* Updated to version ${{ steps.tag.outputs.tag }}" >> $GITHUB_OUTPUT
-          echo "* Check the [npm package](https://www.npmjs.com/package/@niekph/webp-image-generator) for details" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.tag.outputs.tag }}
           name: Release ${{ steps.tag.outputs.tag }}
-          body: ${{ steps.changelog.outputs.changelog }}
+          generate_release_notes: true  # This generates automatic changelog!
           draft: false
           prerelease: false
         env:
