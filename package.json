@@ -1,5 +1,5 @@
 {
-  "name": "@niek-ph/webp-image-generator",
+  "name": "@niekph/webp-image-generator",
   "version": "1.0.0",
   "description": "A simple CLI tool and Vite plugin to generate WebP images from PNG/JPG files",
   "main": "dist/index.js",
@@ -29,7 +29,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/niek-dev/webp-image-generator.git"
+    "url": "https://github.com/niek-ph/webp-image-generator.git"
   },
   "files": [
     "dist/**/*",
