@@ -1,6 +1,6 @@
 {
   "name": "@niekph/webp-image-generator",
-  "version": "1.2.4",
+  "version": "1.3.0",
   "description": "A simple CLI tool and Vite plugin to generate WebP images from PNG/JPG files",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
