@@ -22,6 +22,7 @@ async function isFile(filePath: string): Promise<boolean> {
     const stats = await stat(filePath);
     return stats.isFile();
   } catch (error) {
+    console.warn('Error running fs.stat of file', error);
     return false;
   }
 }
