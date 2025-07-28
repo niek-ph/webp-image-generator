@@ -1,38 +1,47 @@
 import { generateWebpFiles, WebPOptions } from './generator';
 
+type ViteHookPatterns = {
+  buildStart?: string[];
+  buildEnd?: string[];
+};
+
+type PatternsType = string[] | ViteHookPatterns;
+
 export interface WebPPluginOptions extends WebPOptions {
-  patterns?: {
-    development?: string | string[];
-    production?: string | string[];
-  };
+  patterns?: PatternsType;
 }
 
 /**
  * Vite plugin for generating WebP files from PNG & JPG images.
  */
 export function webpGenerator(options: WebPPluginOptions = {}) {
-  const {
-    patterns = {
-      development: 'resources/images/**/*.{png,jpg,jpeg}',
-      production: 'public/**/*.{png,jpg,jpeg}',
-    },
-    ...webpOptions
-  } = options;
+  const { patterns = ['assets/images/**/*.{png,jpg,jpeg}'], ...webpOptions } =
+    options;
+
+  // Helper function to check if patterns is a hook configuration object
+  function isHookPatterns(p: PatternsType): p is ViteHookPatterns {
+    return p !== null && typeof p === 'object' && !Array.isArray(p);
+  }
+
+  // Determine patterns for each hook
+  const buildStartPatterns = isHookPatterns(patterns)
+    ? patterns.buildStart
+    : patterns;
+
+  const buildEndPatterns = isHookPatterns(patterns)
+    ? patterns.buildEnd
+    : undefined;
 
   return {
     name: 'webp-generator',
     async buildStart() {
-      if (patterns.development) {
-        await generateWebpFiles(
-          patterns.development,
-          'Development',
-          webpOptions
-        );
+      if (buildStartPatterns && buildStartPatterns.length > 0) {
+        await generateWebpFiles(buildStartPatterns, 'Build Start', webpOptions);
       }
     },
     async closeBundle() {
-      if (patterns.production) {
-        await generateWebpFiles(patterns.production, 'Production', webpOptions);
+      if (buildEndPatterns && buildEndPatterns.length > 0) {
+        await generateWebpFiles(buildEndPatterns, 'Build End', webpOptions);
       }
     },
   };

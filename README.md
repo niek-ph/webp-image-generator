@@ -15,6 +15,7 @@ configuration.
 - 🎛️ Configurable quality settings
 - 📦 Both CLI tool and Vite plugin
 - 🌐 Cross-platform support
+- 🎯 Vite plugin with flexible hook-based pattern configuration
 
 ## Installation
 
@@ -37,14 +38,17 @@ yarn add @niekph/webp-image-generator
 ### Basic usage
 
 ```bash
-# Process all images in current directory
-webp-gen "**/*.{png,jpg,jpeg}"
+# Process all images in current directory (recommended)
+webp-gen 'resources/images/**/*'
+
+# Process specific formats (use quotes to prevent shell expansion)
+webp-gen 'resources/images/**/*.{png,jpg,jpeg}'
 
 # Process images in specific directory
-webp-gen "src/images/**/*.{png,jpg}"
+webp-gen 'src/images/**/*.png'
 
 # Multiple patterns
-webp-gen "assets/**/*.png" "public/**/*.jpg"
+webp-gen 'assets/**/*.png' 'public/**/*.jpg'
 ```
 
 ### CLI Options
@@ -59,13 +63,28 @@ webp-gen "assets/**/*.png" "public/**/*.jpg"
 
 ```bash
 # Custom quality
-webp-gen --quality 90 "images/**/*"
+webp-gen --quality 90 'images/**/*'
 
 # Regenerate all files
-webp-gen --no-skip-existing "**/*.{png,jpg}"
+webp-gen --no-skip-existing 'resources/**/*'
 
 # Verbose output
-webp-gen --verbose "src/**/*.png"
+webp-gen --verbose 'src/**/*.png'
+
+# Multiple directories
+webp-gen 'src/assets/**/*' 'public/images/**/*'
+```
+
+## Shell Compatibility Notes
+
+**Important**: Always use **single quotes** around glob patterns to prevent your shell from expanding them prematurely.
+
+```bash
+# ✅ Correct - prevents shell expansion
+webp-gen 'resources/images/**/*.{png,jpg,jpeg}'
+
+# ❌ Incorrect - may cause "no matches found" errors
+webp-gen resources/images/**/*.{png,jpg,jpeg}
 ```
 
 ## Programmatic Usage
@@ -80,6 +99,10 @@ await generateWebpFiles(['src/**/*.{png,jpg}'], 'MyApp', {
 ```
 
 ## Vite Plugin Usage
+
+The Vite plugin supports flexible pattern configuration for different build hooks.
+
+### Basic Usage (patterns run during buildStart)
 
 ```typescript
 import {defineConfig} from 'vite';
@@ -96,6 +119,57 @@ export default defineConfig({
 });
 ```
 
+### Hook-specific Pattern Configuration
+
+```typescript
+import {defineConfig} from 'vite';
+import {webpGenerator} from '@niekph/webp-image-generator';
+
+export default defineConfig({
+    plugins: [
+        webpGenerator({
+            patterns: {
+                buildStart: ['src/assets/**/*.{png,jpg,jpeg}'],
+                buildEnd: ['dist/images/**/*.{png,jpg,jpeg}']
+            },
+            quality: 90,
+            skipExisting: true
+        })
+    ]
+});
+```
+
+### Advanced Examples
+
+```typescript
+// Only process images at build end (e.g., for dist optimization)
+webpGenerator({
+    patterns: {
+        buildEnd: ['dist/assets/**/*.{png,jpg,jpeg}']
+    }
+})
+
+// Different patterns for different hooks
+webpGenerator({
+    patterns: {
+        buildStart: ['src/assets/**/*.png'], // Source images
+        buildEnd: ['dist/images/**/*.jpg']   // Built images
+    },
+    quality: 85
+})
+
+// Multiple patterns per hook
+webpGenerator({
+    patterns: {
+        buildStart: [
+            'src/assets/images/**/*.{png,jpg}',
+            'src/components/**/assets/*.{png,jpg,jpeg}'
+        ],
+        buildEnd: ['dist/assets/**/*.{png,jpg,jpeg}']
+    }
+})
+```
+
 ## API
 
 ### `generateWebpFiles(patterns, mode, options)`
@@ -103,8 +177,31 @@ export default defineConfig({
 - `patterns`: string | string[] - Glob patterns for image files
 - `mode`: string - Mode identifier for logging
 - `options`: WebPOptions
-    - `quality?: number` - WebP quality (0-100, default: 80)
-    - `skipExisting?: boolean` - Skip existing WebP files (default: true)
+  - `quality?: number` - WebP quality (0-100, default: 80)
+  - `skipExisting?: boolean` - Skip existing WebP files (default: true)
+
+### `webpGenerator(options)` - Vite Plugin
+
+- `options`: WebPPluginOptions
+  - `patterns?: string[] | ViteHookPatterns` - Pattern configuration
+    - **string[]**: Patterns to run during `buildStart` only
+    - **ViteHookPatterns**: Object with `buildStart?` and `buildEnd?` arrays
+  - `quality?: number` - WebP quality (0-100, default: 80)
+  - `skipExisting?: boolean` - Skip existing WebP files (default: true)
+
+#### ViteHookPatterns Type
+
+```typescript
+type ViteHookPatterns = {
+  buildStart?: string[];  // Patterns to process when build starts
+  buildEnd?: string[];    // Patterns to process when build ends
+}
+```
+
+## Build Hook Usage
+
+- **`buildStart`**: Ideal for processing source images before bundling
+- **`buildEnd`**: Perfect for optimizing images in the final build output
 
 ## Requirements
 
@@ -114,23 +211,3 @@ export default defineConfig({
 ## License
 
 MIT
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## Changelog
-
-### 1.0.0
-
-- Initial release
-- CLI tool for WebP generation
-- Vite plugin support
-- Intelligent caching
-- Configurable quality settings
-
-```

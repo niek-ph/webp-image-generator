@@ -1,11 +1,29 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { glob } from 'glob';
-import { dirname } from 'path';
+import { dirname, extname } from 'path';
 import sharp from 'sharp';
+import { stat } from 'node:fs/promises';
 
 export interface WebPOptions {
   quality?: number;
   skipExisting?: boolean;
+}
+
+// Supported image formats for WebP conversion
+const SUPPORTED_EXTENSIONS = ['.png', '.jpg', '.jpeg'];
+
+function isSupportedImageFormat(filePath: string): boolean {
+  const ext = extname(filePath).toLowerCase();
+  return SUPPORTED_EXTENSIONS.includes(ext);
+}
+
+async function isFile(filePath: string): Promise<boolean> {
+  try {
+    const stats = await stat(filePath);
+    return stats.isFile();
+  } catch (error) {
+    return false;
+  }
 }
 
 export async function generateWebpFiles(
@@ -22,16 +40,29 @@ export async function generateWebpFiles(
   for (const pattern of patternArray) {
     const imageFiles = glob.sync(pattern, {
       ignore: ['**/*.webp', '**/*.webp.*'],
+      // Only return files, not directories
+      nodir: true,
+      // Follow symbolic links to files but not directories
+      follow: true,
+      // Ignore case for file extensions
+      nocase: true,
     });
 
-    totalFiles += imageFiles.length;
+    const supportedImageFiles = imageFiles.filter(isSupportedImageFormat);
+
+    totalFiles += supportedImageFiles.length;
 
     console.log(
-      `🖼️ [${mode}] Found ${imageFiles.length} images in pattern: ${pattern}`
+      `🖼️ [${mode}] Found ${supportedImageFiles.length} supported images in pattern: ${pattern}`
     );
 
-    for (const filePath of imageFiles) {
+    for (const filePath of supportedImageFiles) {
       try {
+        // Check if path is a file (not a directory)
+        if (!(await isFile(filePath))) {
+          continue;
+        }
+
         const webpPath = `${filePath}.webp`;
 
         // Check if WebP file already exists and is newer than original

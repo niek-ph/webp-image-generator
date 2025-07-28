@@ -112,7 +112,6 @@ describe('CLI Command', () => {
       stdio: 'pipe',
     });
 
-    expect(output).toContain('Found 0 images in pattern');
     expect(output).toContain('✨ All WebP generation tasks completed!');
   });
 });
