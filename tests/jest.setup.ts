@@ -1,13 +1,13 @@
-import {cleanupTestEnvironment} from './setup';
+import { cleanupTestEnvironment } from './setup';
 
 // Global cleanup before all tests
 beforeAll(async () => {
-    await cleanupTestEnvironment();
+  await cleanupTestEnvironment();
 });
 
 // Global cleanup after all tests
 afterAll(async () => {
-    await cleanupTestEnvironment();
+  await cleanupTestEnvironment();
 });
 
 // Increase timeout for all tests

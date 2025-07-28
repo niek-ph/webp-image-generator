@@ -1,2 +1,2 @@
-export {generateWebpFiles, WebPOptions} from "./generator";
-export {webpGenerator, WebPPluginOptions} from "./vite-plugin";
+export { generateWebpFiles, WebPOptions } from './generator';
+export { webpGenerator, WebPPluginOptions } from './vite-plugin';

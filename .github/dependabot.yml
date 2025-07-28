@@ -1,18 +1,15 @@
----
+# .github/dependabot.yml
 version: 2
 updates:
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "daily"
-    labels:
-      - "dependencies"
-
-  # Maintain dependencies for npm
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "daily"
-    labels:
-      - "npm"
-      - "dependencies"
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "niek-ph"
+    assignees:
+      - "niek-ph"
+    commit-message:
+      prefix: "chore"
+      include: "scope"

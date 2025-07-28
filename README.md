@@ -1,5 +1,10 @@
 # WebP Image Generator
 
+[![CI](https://github.com/niek-ph/webp-image-generator/workflows/CI/badge.svg)](https://github.com/niek-ph/webp-image-generator/actions)
+[![npm version](https://badge.fury.io/js/%40niekph%2Fwebp-image-generator.svg)](https://badge.fury.io/js/%40niekph%2Fwebp-image-generator)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+
 A simple CLI tool and Vite plugin to generate WebP images from PNG/JPG files with intelligent caching and flexible path
 configuration.
 
