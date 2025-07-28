@@ -1,0 +1,10 @@
+/node_modules
+/build
+/dist
+.env*
+auth.json
+npm-debug.log
+yarn-error.log
+/.idea
+/.vscode
+/tests/temp
