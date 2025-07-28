@@ -21,15 +21,15 @@ configuration.
 ### As a global tool (recommended for CLI usage)
 
 ```bash
-npm install -g webp-image-generator
+npm install -g @niekph/webp-image-generator
 ```
 
 ### As a project dependency
 
 ```bash
-npm install webp-image-generator
+npm install @niekph/webp-image-generator
 # or
-yarn add webp-image-generator
+yarn add @niekph/webp-image-generator
 ```
 
 ## CLI Usage
@@ -71,7 +71,7 @@ webp-gen --verbose "src/**/*.png"
 ## Programmatic Usage
 
 ```typescript
-import {generateWebpFiles} from 'webp-image-generator';
+import {generateWebpFiles} from '@niekph/webp-image-generator';
 
 await generateWebpFiles(['src/**/*.{png,jpg}'], 'MyApp', {
     quality: 80,
@@ -83,7 +83,7 @@ await generateWebpFiles(['src/**/*.{png,jpg}'], 'MyApp', {
 
 ```typescript
 import {defineConfig} from 'vite';
-import {webpGenerator} from 'webp-image-generator';
+import {webpGenerator} from '@niekph/webp-image-generator';
 
 export default defineConfig({
     plugins: [
