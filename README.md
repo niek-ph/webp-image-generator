@@ -1,6 +1,6 @@
 # WebP Image Generator
 
-[![npm version](https://badge.fury.io/js/%40niekph%2Fwebp-image-generator.svg)](https://badge.fury.io/js/%40niekph%2Fwebp-image-generator)
+[![npm version](https://img.shields.io/npm/v/@niekph/webp-image-generator)](https://www.npmjs.com/package/@niekph/webp-image-generator)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 
